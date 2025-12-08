@@ -164,14 +164,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "numpy" },
-    { name = "simpleitk" },
+    { name = "simpleitkutilities" },
     { name = "vtk" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "numpy", specifier = ">=2.3.5" },
-    { name = "simpleitk", specifier = ">=2.5.3" },
+    { name = "simpleitkutilities", specifier = ">=0.3.0" },
     { name = "vtk", specifier = ">=9.5.2" },
 ]
 
@@ -373,6 +373,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/40/5c/05adaf29352935989b8686a007f4ffb7fa77c8d7fb9a79a595f3efa4e917/simpleitk-2.5.3-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:724a8fba4a493a9da06cbba545521174092927acf99fbc0594f4f257d66061ff", size = 47955234, upload-time = "2025-11-21T13:42:12.369Z" },
     { url = "https://files.pythonhosted.org/packages/21/0d/002bed1d46df8397e3a1a89b28073080eadfc145f043e3cdcb5bc6044b5c/simpleitk-2.5.3-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:b615a96826815471965899d50d089fb67381a4d59b65750eafe58a6a980ecce2", size = 52606624, upload-time = "2025-11-21T13:42:17.592Z" },
     { url = "https://files.pythonhosted.org/packages/b8/69/2b0b27fd9cb3a66893fc02b6be5e5afd776e9d5c56cb26e0a6efdcda9060/simpleitk-2.5.3-cp311-abi3-win_amd64.whl", hash = "sha256:31b187922c53c858f8604b4f90ebd7aae809e680de751674f5f95ccefcf674d5", size = 18817624, upload-time = "2025-11-21T13:42:21.645Z" },
+]
+
+[[package]]
+name = "simpleitkutilities"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "simpleitk" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b5/aa/11493b0dfaf561b099b14daa2d061c399ca72143c8b7c72b486098a469de/SimpleITKUtilities-0.3.0.tar.gz", hash = "sha256:9ff4db679810bf228a3ca7416bbb238bf297fdf3260c33b5defaaf828547921f", size = 24732, upload-time = "2024-02-13T20:23:11.552Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/bf/a923bf858488c238950523261aa54dcc9c2edff8f48e22b3ef9732abcf65/SimpleITKUtilities-0.3.0-py3-none-any.whl", hash = "sha256:76db995dc29987c4f0fdd20359ad4940ac1bc91664d5d74f94b231181736d255", size = 22913, upload-time = "2024-02-13T20:23:09.813Z" },
 ]
 
 [[package]]

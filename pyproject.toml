@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.3.5",
-    "simpleitk>=2.5.3",
+    "simpleitkutilities>=0.3.0",
     "vtk>=9.5.2",
 ]
