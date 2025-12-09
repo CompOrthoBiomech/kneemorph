@@ -47,6 +47,52 @@ def map_source_mesh(mesh: vtk.vtkPolyData) -> vtk.vtkPolyData:
     return mesh
 
 
+def extract_insertion_points(mesh: vtk.vtkPolyData) -> vtk.vtkPolyData:
+    points = vtk_to_numpy(mesh.GetPoints().GetData())
+    point_ids = mesh.GetPointData().GetArray("InsertionID")
+    unique_ids = sorted(list(np.unique(vtk_to_numpy(point_ids))))
+    appended_polydata = vtk.vtkAppendPolyData()
+    for id in unique_ids[1:]:
+        coords = points[point_ids == id]
+        id_array = numpy_to_vtk(np.full(coords.shape[0], id, dtype=int), deep=True, array_type=vtk.VTK_ID_TYPE)
+        id_array.SetName("InsertionID")
+        poly = vtk.vtkPolyData()
+        poly_points = vtk.vtkPoints()
+        poly_cells = vtk.vtkCellArray()
+        for i in range(coords.shape[0]):
+            poly_points.InsertNextPoint(coords[i])
+            poly_cells.InsertNextCell(1, [i])
+        poly.SetPoints(poly_points)
+        poly.SetVerts(poly_cells)
+        poly.GetPointData().AddArray(id_array)
+        appended_polydata.AddInputData(poly)
+    appended_polydata.Update()
+    return appended_polydata.GetOutput()
+
+
+def create_pretransform(config: GBCPDConfig) -> vtk.vtkTransform:
+    if config.pretransform_file is not None:
+        pretransform_file = Path(config.pretransform_file)
+        if pretransform_file.is_file():
+            pretransform_matrix = np.load(pretransform_file)
+        else:
+            raise FileNotFoundError(f"File not found: {pretransform_file}")
+    else:
+        pretransform_matrix = np.eye(4)
+    pretransform = vtk.vtkTransform()
+    pretransform.SetMatrix(pretransform_matrix.ravel())
+    pretransform.Inverse()
+    return pretransform
+
+
+def transform_polydata(polydata: vtk.vtkPolyData, tx: vtk.vtkTransform) -> vtk.vtkPolyData:
+    transform_filter = vtk.vtkTransformPolyDataFilter()
+    transform_filter.SetInputData(polydata)
+    transform_filter.SetTransform(tx)
+    transform_filter.Update()
+    return transform_filter.GetOutput()
+
+
 def main(config: GBCPDConfig):
     output_dir = Path(config.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -56,8 +102,12 @@ def main(config: GBCPDConfig):
         target_meshes.append((target_mesh_path, read_vtp(target_mesh_path.as_posix())))
     elif target_mesh_path.is_dir():
         target_meshes = [(path, read_vtp(path.as_posix())) for path in target_mesh_path.glob("*.vtp")]
+    else:
+        raise FileNotFoundError(f"File not found: {target_mesh_path}")
     source_mesh = read_vtp(config.source_mesh_file)
     source_points_file = convert_mesh_points_to_text(source_mesh)
+
+    pretransform = create_pretransform(config)
     for target_mesh_filename, target_mesh in target_meshes:
         target_point_file = convert_mesh_points_to_text(target_mesh)
         target_tri_file = convert_mesh_tris_to_text(target_mesh)
@@ -80,8 +130,15 @@ def main(config: GBCPDConfig):
         subprocess.run(" ".join(cli_args), shell=True)
 
         mapped_mesh = map_source_mesh(source_mesh)
+        mapped_mesh = transform_polydata(mapped_mesh, pretransform)
         mapped_mesh_path = output_dir.joinpath(f"mapped_{target_mesh_filename.stem}.vtp")
         save_vtp(mapped_mesh, mapped_mesh_path)
+
+        if config.extract_insertions:
+            insertion_points = extract_insertion_points(mapped_mesh)
+            insertion_points_path = output_dir.joinpath("insertions_points.vtp")
+            save_vtp(insertion_points, insertion_points_path)
+
         for f in ("output_info.txt", "output_comptime.txt", "output_y.txt"):
             filepath = Path(f)
             if filepath.exists() and filepath.is_file():
