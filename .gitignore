@@ -3,6 +3,7 @@ dat/
 sol/
 media/
 # file patterns
+bcpd*
 *.zip
 *.nii
 *.vtp
