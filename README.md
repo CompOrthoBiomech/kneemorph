@@ -32,7 +32,7 @@ This will fetch the required Python (or create a symlink if you have already) an
 
 On Windows:
 
-A statically linked binary can be downloaded from [here](https://raw.githubusercontent.com/CompOrthoBiomech/bpcd/master/win/bpcd.exe).
+A statically linked binary can be downloaded from [here](https://raw.githubusercontent.com/CompOrthoBiomech/bcpd/master/win/bcpd.exe).
 
 On Linux:
 
