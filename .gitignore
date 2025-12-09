@@ -1,6 +1,7 @@
 # directories
 dat/
 sol/
+media/
 # file patterns
 *.zip
 *.nii
