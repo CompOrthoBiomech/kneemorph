@@ -1,11 +1,10 @@
 [project]
 name = "kneemorph"
 version = "0.1.0"
-description = "Add your description here"
+description = "Template mesh mapping using the geodesic-based Bayesian coherent point drift algorithm"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "numpy>=2.3.5",
-    "simpleitkutilities>=0.3.0",
-    "vtk>=9.5.2",
+  "numpy>=2.3.5",
+  "vtk>=9.5.2",
 ]
