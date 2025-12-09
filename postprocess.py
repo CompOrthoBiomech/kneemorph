@@ -7,6 +7,7 @@ import vtkmodules.all as vtk
 from vtkmodules.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 
 from config import PostValidationConfig
+from utils import read_vtp, save_vtp
 
 
 def read_mesh(file_path: Path) -> vtk.vtkPolyData:
@@ -98,8 +99,8 @@ def main(config: PostValidationConfig):
     assert len(truth_mesh_paths) == len(result_mesh_paths), "Number of ground truth and result meshes must match"
     all_displacement_errors = {}
     for i, (truth_mesh_path, result_mesh_path) in enumerate(zip(truth_mesh_paths, result_mesh_paths)):
-        truth_mesh = read_mesh(truth_mesh_path)
-        result_mesh = read_mesh(result_mesh_path)
+        truth_mesh = read_vtp(truth_mesh_path)
+        result_mesh = read_vtp(result_mesh_path)
         if i == 0:
             insertion_lut = _get_insertion_lut(truth_mesh)
         displacement_errors = _get_displacement_error(truth_mesh, result_mesh, insertion_lut)  # pyright: ignore[reportPossiblyUnboundVariable]
@@ -112,12 +113,9 @@ def main(config: PostValidationConfig):
     pointwise_stats = _get_pointwise_stats(all_displacement_errors)
     aggregate_stats = _get_aggregate_stats(all_displacement_errors)
     np.savetxt(str(output_dir / "displacement_errors.csv"), aggregate_stats, delimiter=",", header="ID, Mean, STD, CI Upper Bound")
-    template_mesh = read_mesh(template_mesh_path)
+    template_mesh = read_vtp(template_mesh_path)
     stats_polydata = visualize_error(template_mesh, pointwise_stats)
-    writer = vtk.vtkXMLPolyDataWriter()
-    writer.SetFileName(str(output_dir / "error_visualization.vtp"))
-    writer.SetInputData(stats_polydata)
-    writer.Write()
+    save_vtp(stats_polydata, output_dir / "error_visualization.vtp")
 
 
 if __name__ == "__main__":
