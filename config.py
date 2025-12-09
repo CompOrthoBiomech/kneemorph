@@ -38,6 +38,8 @@ class GBCPDConfig:
     :type target_mesh_path: str
     :param output_dir: Path to output directory
     :type output_dir: str
+    :param extract_insertions: Whether to extract ligament insertion points as a separate file
+    :type extract_insertions: bool
     :param omega: Outlier probability (0,1)
     :type omega: float
     :param lambda_: Controls expected length of deformation vectors. Smaller is longer.
@@ -72,6 +74,8 @@ class GBCPDConfig:
     source_mesh_file: str
     target_mesh_path: str
     output_dir: str
+    pretransform_file: str | None = None
+    extract_insertions: bool = True
     omega: float = 0.0
     beta: float = 1.2
     lambda_: float = 50
