@@ -5,6 +5,8 @@ import vtkmodules.all as vtk
 
 
 def read_stl(filepath: Path | str):
+    if not Path(filepath).exists():
+        raise FileNotFoundError(f"File not found: {filepath}")
     reader = vtk.vtkSTLReader()
     reader.SetFileName(Path(filepath).as_posix())
     reader.Update()
@@ -12,6 +14,8 @@ def read_stl(filepath: Path | str):
 
 
 def read_vtp(filepath: Path | str):
+    if not Path(filepath).exists():
+        raise FileNotFoundError(f"File not found: {filepath}")
     reader = vtk.vtkXMLPolyDataReader()
     reader.SetFileName(Path(filepath).as_posix())
     reader.Update()
