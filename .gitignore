@@ -1,12 +1,12 @@
 # directories
-DU02/
-LigamentPatch/
-
+dat/
+sol/
 # file patterns
 *.zip
 *.nii
 *.vtp
 *.vti
+*.png
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
