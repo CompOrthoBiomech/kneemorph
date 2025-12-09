@@ -1,0 +1,6 @@
+{
+  "template_mesh_file": "dat/processed/DU02/femur/mesh.vtp",
+  "ground_truth_path": "dat/augmented/DU02/femur",
+  "result_path": "sol/DU02_validation/mapped",
+  "output_dir": "sol/DU02_validation/postprocessed"
+}
