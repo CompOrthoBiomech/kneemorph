@@ -110,6 +110,36 @@ mv bpcd /path/to/kneemorph
 
 ## Usage
 
+### Data for studies
+
+The provided configuration files in the `studies/` directory utilize the Natural Knee Data from
+the University of Denver. Download the zipped data from:
+
+[DU02](https://digitalcommons.du.edu/cgi/viewcontent.cgi?filename=3&article=1001&context=natural_knee_data&type=additional)
+
+[DU03](https://digitalcommons.du.edu/cgi/viewcontent.cgi?filename=3&article=1002&context=natural_knee_data&type=additional)
+
+[DU04](https://digitalcommons.du.edu/cgi/viewcontent.cgi?filename=2&article=1003&context=natural_knee_data&type=additional)
+
+[DU05](https://digitalcommons.du.edu/cgi/viewcontent.cgi?filename=2&article=1004&context=natural_knee_data&type=additional)
+
+To utilize the configuration files without modification,
+
+create a `dat/` directory in the top-level of the kneemorph repository:
+
+```bash
+mkdir dat
+```
+
+and unzip each downloaded dataset into the `dat/` directory:
+
+```bash
+unzip DU02.zip -d dat/
+unzip DU03.zip -d dat/
+unzip DU04.zip -d dat/
+unzip DU05.zip -d dat/
+```
+
 ### preprocess.py
 
 This script preprocesses a mesh and insertion point text files (if provided) for later registration.
