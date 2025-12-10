@@ -83,12 +83,11 @@ def define_ligament_insertions(bone_poly: vtk.vtkPolyData, ligament_insertions: 
         point_ids = project_points(insertions, locator)
         insertion_ids[point_ids] = i + 1
         ligament_lut[i + 1] = ligament
-    if not ligament_lut:
-        raise ValueError("ligament_insertions in configuration was empty!")
-    insertion_id_array = numpy_to_vtk(insertion_ids, deep=True, array_type=vtk.VTK_ID_TYPE)
-    insertion_id_array.SetName("InsertionID")
-    insertion_id_array.SetNumberOfComponents(1)
-    bone_poly.GetPointData().AddArray(insertion_id_array)
+    if ligament_lut:
+        insertion_id_array = numpy_to_vtk(insertion_ids, deep=True, array_type=vtk.VTK_ID_TYPE)
+        insertion_id_array.SetName("InsertionID")
+        insertion_id_array.SetNumberOfComponents(1)
+        bone_poly.GetPointData().AddArray(insertion_id_array)
     return ligament_lut
 
 
@@ -103,7 +102,9 @@ def main(config: PreprocessConfig):
         raise ValueError(f"Unsupported file format: {Path(config.bone).suffix}")
     if config.subdivisions > 0:
         bone_poly = refine_mesh(bone_poly, config.subdivisions)
-    ligament_lut = define_ligament_insertions(bone_poly, config.ligament_insertions)
+    ligament_lut = {}
+    if config.ligament_insertions is not None:
+        ligament_lut = define_ligament_insertions(bone_poly, config.ligament_insertions)
     transform_list = []
     if config.mirror:
         transform_list.append(get_mirror_transform(config.mirror_axis))
@@ -116,9 +117,9 @@ def main(config: PreprocessConfig):
 
     # Save the refined mesh with insertion IDs
     save_vtp(bone_poly, output_dir.joinpath("mesh.vtp"))
-
-    # Save the ligament ID lookup table as json
-    save_json(ligament_lut, output_dir.joinpath("ligament_ids.json"))
+    if ligament_lut:
+        # Save the ligament ID lookup table as json
+        save_json(ligament_lut, output_dir.joinpath("ligament_ids.json"))
 
 
 if __name__ == "__main__":

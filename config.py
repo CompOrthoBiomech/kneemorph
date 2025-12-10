@@ -22,8 +22,8 @@ class PostValidationConfig:
 @dataclass
 class PreprocessConfig:
     bone: str
-    ligament_insertions: dict[str, str]
     output_dir: str
+    ligament_insertions: dict[str, str] | None = None
     subdivisions: int = 0
     mirror: bool = False
     mirror_axis: Literal["x", "y", "z"] = "x"
