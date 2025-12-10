@@ -1,5 +1,6 @@
 import argparse
 import json
+import platform
 import subprocess
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -10,6 +11,11 @@ from vtkmodules.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 
 from config import GBCPDConfig
 from utils import read_vtp, save_vtp
+
+if platform.system() == "Windows":
+    bcpd = "bcpd.exe"
+else:
+    bcpd = "bcpd"
 
 CLI_LUT = {
     "omega": "-w",
@@ -113,7 +119,7 @@ def main(config: GBCPDConfig):
         target_tri_file = convert_mesh_tris_to_text(target_mesh)
 
         cli_args = [
-            "./bcpd",
+            f"./{bcpd}",
             f"-x{target_point_file}",
             f"-y{source_points_file}",
             f"-u{config.nrm}",
