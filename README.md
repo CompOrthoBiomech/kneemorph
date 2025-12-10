@@ -121,14 +121,14 @@ The `PreprocessConfig` class:
 @dataclass
 class PreprocessConfig:
     bone: str
-    ligament_insertions: dict[str, str]
+    ligament_insertions: dict[str, str] | None = None
     output_dir: str
     subdivisions: int = 0
     mirror: bool = False
     mirror_axis: Literal["x", "y", "z"] = "x"
 ```
 
-Example JSON configuration file [here](studies/du02_validation/du02_preprocess.json) 
+Example JSON configuration file [here](studies/du02_to_du03/du03_preprocess.json) 
 
 ### register.py
 
@@ -159,7 +159,7 @@ class GBCPDConfig:
     tau: float = 0.5
 ```
 
-Example JSON configuration file [here](studies/du02_validation/du02_register.json)
+Example JSON configuration file [here](studies/du02_to_du03/du03_register.json)
 
 ## Validation
 
@@ -195,3 +195,90 @@ class PostValidationConfig:
     result_path: str
     output_dir: str
 ```
+
+## An Example Validation Study
+
+The following steps are executed in a validation study:
+
+1. Run `preprocess.py` to preprocess the template mesh.
+2. Run `augment.py` to create a validation set of N specified target meshes.
+3. Run `register.py` to register the template mesh to the target meshes.
+4. Run `postprocess.py` to evaluate the registration results.
+
+### 1. Preprocess
+
+```bash
+uv run studies/du02_validation/du02_preprocess.json
+```
+
+This will create `dat/processed/DU02/femur` as indicated in the configuration file, and
+save:
+
+- `mesh.vtp` - The preprocessed mesh file.
+- `ligament_insertions.json` - Dictionary mapping ligament integer labels to user-indicated string names.
+- `transform.npy` - The transformation matrix used to center (and mirror if `mirror=True`) the raw mesh.
+
+### 2. Augment
+
+```bash
+uv run studies/du02_validation/du02_augment.json
+```
+
+This will create `dat/augmented/DU02/femur` as indicated in the configuration file, and
+save:
+
+- `mesh00.vtp` .. `mesh99.vtp` - 100 augmented meshes as indicated in configuration.
+
+### 3. Register
+
+```bash
+uv run studies/du02_validation/du02_register.json
+```
+
+This will create `sol/DU02_validation/mapped` as indicated in the configuration file, and
+save:
+
+- `mapped_mesh_00.vtp` .. `mapped_mesh_99.vtp` - The template mesh registered 100 augmented target mesh files.
+
+### 4. Postprocess
+
+```bash
+uv run studies/du02_validation/du02_postprocess.json
+```
+
+This will create `sol/DU02_validation/postprocessed` as indicated in the configuration file, and
+save:
+
+- `error_visualization.vtp` - A point cloud represented as VTK polydata with the `LigamentID`, `Mean` distance error (mm), and  `Upper Confidence Interval Bound` distance error (mm) for visualization.
+- `distance_errors.csv` - CSV file containing the `LigamentID`, `Mean` distance error (mm), `Standard Deviation` of distance error (mm), and `Upper Confidence Interval Bound` distance error (mm) aggregated per ligament.
+
+## An Example Template to Target Registration
+
+The process for template to target registration is as follows:
+
+1. Preprocess the template mesh (if not already done).
+2. Preprocess the target mesh.
+4. Perform the registration.
+
+### 1. Preprocess Template Mesh
+
+```bash
+uv run studies/du02_validation/du02_preprocess.json
+```
+
+### 2. Preprocess Target Mesh
+
+```bash
+uv run studies/du02_to_du03/du03_preprocess.json
+```
+
+### 3. Register
+
+```bash
+uv run studies/du02_to_du03/du03_register.json
+```
+
+The results will be saved in `sol/DU02_to_DU03` as indicated in the configuration file with the following files:
+
+- `mapped_mesh.vtp` - The mapped template mesh. The triangles will likely be degenerate for this. Inspecting the point cloud is recommended.
+- `insertion_points.vtp` - The insertion points as a point cloud with `LigamentID` stored.

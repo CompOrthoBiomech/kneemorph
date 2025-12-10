@@ -1,11 +1,5 @@
 {
   "bone": "dat/DU03_probes_3D_recons/DU03_Fem_Bone.stl",
-  "ligament_insertions": {
-    "acl": "dat/DU03_probes_3D_recons/DU03_ACL_Fem.txt",
-    "pcl": "dat/DU03_probes_3D_recons/DU03_PCL_Fem.txt",
-    "mcl": "dat/DU03_probes_3D_recons/DU03_MCL_Fem.txt",
-    "lcl": "dat/DU03_probes_3D_recons/DU03_LCL_Fem.txt"
-  },
   "output_dir": "dat/processed/DU03/femur",
   "subdivisions": 0
 }
