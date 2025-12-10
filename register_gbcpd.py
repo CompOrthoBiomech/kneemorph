@@ -13,9 +13,9 @@ from config import GBCPDConfig
 from utils import read_vtp, save_vtp
 
 if platform.system() == "Windows":
-    bcpd = "bcpd.exe"
+    bcpd = ".\\bcpd.exe"
 else:
-    bcpd = "bcpd"
+    bcpd = "./bcpd"
 
 CLI_LUT = {
     "omega": "-w",
@@ -119,7 +119,7 @@ def main(config: GBCPDConfig):
         target_tri_file = convert_mesh_tris_to_text(target_mesh)
 
         cli_args = [
-            f"./{bcpd}",
+            f"{bcpd}",
             f"-x{target_point_file}",
             f"-y{source_points_file}",
             f"-u{config.nrm}",
