@@ -40,7 +40,7 @@ def convert_mesh_points_to_text(mesh: vtk.vtkPolyData) -> str:
 
 
 def convert_mesh_tris_to_text(mesh: vtk.vtkPolyData) -> str:
-    tris = vtk_to_numpy(mesh.GetPolys().GetData()).reshape(-1, 4)[:, 1:]
+    tris = vtk_to_numpy(mesh.GetPolys().GetData()).reshape(-1, 4)[:, 1:] + 1
     with NamedTemporaryFile(suffix=".txt", mode="wt", delete=False, delete_on_close=True) as fid:
         np.savetxt(fid, tris, fmt="%d")
     return fid.name
@@ -112,21 +112,31 @@ def main(config: GBCPDConfig):
         raise FileNotFoundError(f"File not found: {target_mesh_path}")
     source_mesh = read_vtp(config.source_mesh_file)
     source_points_file = convert_mesh_points_to_text(source_mesh)
+    source_tri_file = convert_mesh_tris_to_text(source_mesh)
 
     pretransform = create_pretransform(config)
     for target_mesh_filename, target_mesh in target_meshes:
         target_point_file = convert_mesh_points_to_text(target_mesh)
-        target_tri_file = convert_mesh_tris_to_text(target_mesh)
 
-        cli_args = [
-            f"{bcpd}",
-            f"-x{target_point_file}",
-            f"-y{source_points_file}",
-            f"-u{config.nrm}",
-            f"-Ggeodesic,{config.tau},{target_tri_file}",
-            "-p",
-            "-h",
-        ]
+        if np.isclose(config.tau, 0.0):
+            cli_args = [
+                f"{bcpd}",
+                f"-x{target_point_file}",
+                f"-y{source_points_file}",
+                f"-u{config.nrm}",
+                "-p",
+                "-h",
+            ]
+        else:
+            cli_args = [
+                f"{bcpd}",
+                f"-x{target_point_file}",
+                f"-y{source_points_file}",
+                f"-u{config.nrm}",
+                f"-Ggeodesic,{config.tau},{source_tri_file}",
+                "-p",
+                "-h",
+            ]
         for key, value in CLI_LUT.items():
             param = getattr(config, key)
             if param is not None:
