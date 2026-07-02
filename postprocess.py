@@ -2,8 +2,10 @@ import argparse
 import json
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import vtkmodules.all as vtk
+from seaborn import boxplot
 from vtkmodules.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 
 from config import PostValidationConfig
@@ -116,6 +118,11 @@ def main(config: PostValidationConfig):
     template_mesh = read_vtp(template_mesh_path)
     stats_polydata = visualize_error(template_mesh, pointwise_stats)
     save_vtp(stats_polydata, output_dir / "error_visualization.vtp")
+
+    flattened_errors = {key: value.ravel() for key, value in all_displacement_errors.items()}
+
+    boxplot(data=flattened_errors, showfliers=False)
+    plt.savefig(output_dir / "error_boxplot.svg")
 
 
 if __name__ == "__main__":
