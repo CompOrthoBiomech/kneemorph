@@ -1,0 +1,10 @@
+{
+  "source_mesh_file": "dat/gbcpd/male_y.vtp",
+  "target_mesh_path": "dat/gbcpd/male_x.vtp",
+  "output_dir": "sol/male_geodesic",
+  "lambda_": 100,
+  "beta": 0.7,
+  "gamma": 3.0,
+  "tau": 0.2,
+  "extract_insertions": false
+}

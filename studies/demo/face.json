@@ -1,0 +1,10 @@
+{
+  "source_mesh_file": "dat/gbcpd/face-g-y.vtp",
+  "target_mesh_path": "dat/gbcpd/face-g-x.vtp",
+  "output_dir": "sol/face",
+  "lambda_": 100,
+  "beta": 0.7,
+  "gamma": 0.1,
+  "tau": 0.0,
+  "extract_insertions": false
+}
