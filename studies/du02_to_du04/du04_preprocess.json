@@ -1,5 +1,6 @@
 {
   "bone": "dat/DU04_probes_3D_recons/DU04_Fem_Bone.stl",
   "output_dir": "dat/processed/DU04/femur",
-  "subdivisions": 0
+  "subdivisions": 0,
+  "mirror": true
 }
